@@ -7,6 +7,7 @@ const app = express();
 app.use(express.json());
 const pool = new Pool();
 const auctionsRouter = require("./routes/auctions")(pool);
+const usersRouter = require("./routes/users")(pool);
 const port = process.env.PORT || 3000;
 
 app.get("/api/health", async (_req, res) => {
@@ -20,6 +21,7 @@ app.get("/api/health", async (_req, res) => {
 });
 
 app.use("/api/auctions", auctionsRouter);
+app.use("/api/users", usersRouter);
 
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}`);
