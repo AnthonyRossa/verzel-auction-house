@@ -1,0 +1,75 @@
+.login {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.login__modal {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.login__close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.login__title {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.login__input-title {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.login__input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.login__input:focus {
+  border-color: #3b82f6;
+}
+
+.Login__button {
+  margin-top: 1rem;
+  padding: 0.7rem;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.Login__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
