@@ -1,15 +1,13 @@
-import { useState } from "react";
 import "./App.css";
 import Nav from "../Nav/Nav";
+import Cards from "../Cards/Cards"
 
-function App() {
-  const [count, setCount] = useState(0);
+export default function App() {
 
   return (
     <>
       <Nav />
+      <Cards />
     </>
   );
 }
-
-export default App;
