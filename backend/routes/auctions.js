@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticateToken = require("../middleware/auth");
 
 module.exports = (pool) => {
   const router = express.Router();
@@ -42,7 +43,7 @@ module.exports = (pool) => {
   });
 
   //edit or update auction by id
-  router.put("/:id", async (req, res) => {
+  router.put("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { title, description = null, starting_price, ends_at } = req.body ?? {};
 
@@ -64,9 +65,9 @@ module.exports = (pool) => {
     const result = await pool.query(
       `UPDATE auctions
        SET title = $1, description = $2, starting_price = $3, ends_at = $4
-       WHERE id = $5
+       WHERE id = $5 AND seller_id = $6
        RETURNING id, title, description, starting_price, ends_at, created_at`,
-      [title.trim(), description, starting_price, ends_at, id],
+      [title.trim(), description, starting_price, ends_at, id, req.userId],
     );
 
     if (result.rows.length === 0) {
@@ -81,7 +82,7 @@ module.exports = (pool) => {
 });
 
   //create auction 
-  router.post("/", async (req, res) => {
+  router.post("/", authenticateToken, async (req, res) => {
     const {
       title,
       description = null,
@@ -104,10 +105,10 @@ module.exports = (pool) => {
 
     try {
       const result = await pool.query(
-        `INSERT INTO auctions (title, description, starting_price, ends_at)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO auctions (seller_id, title, description, starting_price, ends_at)
+         VALUES ($1, $2, $3, $4, $5)
          RETURNING id, title, description, starting_price, ends_at, created_at`,
-        [title.trim(), description, starting_price, ends_at],
+        [req.userId, title.trim(), description, starting_price, ends_at],
       );
 
       res.status(201).json(result.rows[0]);
