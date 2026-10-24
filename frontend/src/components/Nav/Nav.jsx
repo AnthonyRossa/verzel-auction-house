@@ -4,7 +4,7 @@ import Search from "../../images/search-icon.svg";
 export default function Nav() {
   return (
     <>
-      <section className="nav">
+      <nav className="nav">
         <h1 className="nav__title">Auto Bids</h1>
         <form className="nav__search-form">
           <input
@@ -20,7 +20,7 @@ export default function Nav() {
         <button className="nav__create-button">Create Account</button>
         <button className="nav__login-button">Log In</button>
         </div>
-      </section>
+      </nav>
     </>
   );
 }
