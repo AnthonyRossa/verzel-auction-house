@@ -32,15 +32,22 @@ class Api {
     return data;
   }
 
-  getAuctions({ signal } = {}) {
-    return this._makeRequest("/auctions", { signal });
-  }
-
   login(email, password) {
     return this._makeRequest("/users/login", {
       method: "POST",
       body: { email, password },
     });
+  }
+
+  register({ name, email, password }) {
+    return this._makeRequest("/users/register", {
+      method: "POST",
+      body: { name, email, password },
+    });
+  }
+
+  getAuctions({ signal } = {}) {
+    return this._makeRequest("/auctions", { signal });
   }
 
   createAuction(auctionData, token) {

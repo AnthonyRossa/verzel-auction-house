@@ -67,7 +67,7 @@ export default function Login({ onLogin, onClose }) {
               required
             />
             <button
-              className="Login__button"
+              className="login__button"
               type="submit"
               disabled={isLoading}
               
