@@ -37,3 +37,12 @@
   font-weight: 600;
   font-size: 1rem;
 }
+
+.cards__image {
+  display: block;
+  width: 100%;
+  height: 180px;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  object-fit: cover;
+}

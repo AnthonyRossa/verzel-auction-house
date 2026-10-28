@@ -69,6 +69,21 @@ class Api {
   getBids(auctionId, { signal } = {}) {
     return this._makeRequest(`/auctions/${auctionId}/bids`, { signal });
   }
+
+  updateAuction(id, auctionData, token) {
+  return this._makeRequest(`/auctions/${id}`, {
+    method: "PUT",
+    body: auctionData,
+    token,
+  });
+}
+
+deleteAuction(id, token) {
+  return this._makeRequest(`/auctions/${id}`, {
+    method: "DELETE",
+    token,
+  });
+}
 }
 
 const api = new Api(BASE_URL);

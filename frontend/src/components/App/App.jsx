@@ -11,6 +11,7 @@ export default function App() {
   const [session, setSession] = useState(null);
   const [openModal, setOpenModal] = useState(null);
   const [showCreateAuction, setShowCreateAuction] = useState(false);
+  const [editingAuction, setEditingAuction] = useState(null);
   const [auctionsVersion, setAuctionsVersion] = useState(0);
 
   return (
@@ -22,10 +23,14 @@ export default function App() {
         onRegisterClick={() => setOpenModal("register")}
         onLogoutClick={() => setSession(null)}
       />
-      {showCreateAuction && (
+      {(showCreateAuction || editingAuction) && (
         <CreateAuction
           token={session.token}
-          onClose={() => setShowCreateAuction(false)}
+          auction={editingAuction}
+          onClose={() => {
+            setShowCreateAuction(false);
+            setEditingAuction(null);
+          }}
           onCreated={() => setAuctionsVersion((version) => version + 1)}
         />
       )}
@@ -40,7 +45,13 @@ export default function App() {
           onSuccess={() => setOpenModal("login")}
         />
       )}
-      <Cards key={auctionsVersion} />
+      <Cards
+        key={auctionsVersion}
+        user={session?.user}
+        token={session?.token}
+        onEdit={setEditingAuction}
+        onDeleted={() => setAuctionsVersion((version) => version + 1)}
+      />
       <Footer />
     </>
   );
