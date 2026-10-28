@@ -1,6 +1,8 @@
 import { useState } from "react";
 import api from "../../utils/api";
 import "./CreateAuction.css";
+import { useContext } from "react";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
 
 function toLocalDateTime(value) {
   if (!value) return "";
@@ -11,7 +13,6 @@ function toLocalDateTime(value) {
 }
 
 export default function CreateAuction({
-  token,
   auction = null,
   onClose,
   onCreated,
@@ -19,6 +20,7 @@ export default function CreateAuction({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const isEditing = Boolean(auction);
+  const { token } = useContext(CurrentUserContext);
 
   async function handleSubmit(event) {
     event.preventDefault();

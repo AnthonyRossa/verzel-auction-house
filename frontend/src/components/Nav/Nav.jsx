@@ -1,13 +1,16 @@
 import "./Nav.css";
 import Search from "../../images/search-icon.svg";
+import { useContext } from "react";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
 
 export default function Nav({
-  user,
   onLoginClick,
   onRegisterClick,
   onLogoutClick,
-  onCreateAuctionClick
+  onCreateAuctionClick,
 }) {
+  const { user } = useContext(CurrentUserContext);
+
   return (
     <>
       <nav className="nav">

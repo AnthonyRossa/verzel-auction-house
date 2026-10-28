@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import "./Cards.css";
 import api from "../../utils/api";
+import { useContext } from "react";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
 
-export default function Cards({ user, token, onEdit, onDeleted }) {
+export default function Cards({ onEdit, onDeleted }) {
+  const { user, token } = useContext(CurrentUserContext);
   const [auctions, setAuctions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -39,7 +42,7 @@ export default function Cards({ user, token, onEdit, onDeleted }) {
       ) : (
         auctions.map((auction) => (
           <article className="cards__card" key={auction.id}>
-            {String(auction.seller_id) === String(user?.id) && (
+            {user && String(auction.seller_id) === String(user.id) && (
               <div className="cards__actions">
                 <button type="button" onClick={() => onEdit(auction)}>
                   Edit
