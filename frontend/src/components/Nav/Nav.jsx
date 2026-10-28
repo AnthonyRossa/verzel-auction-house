@@ -1,7 +1,13 @@
 import "./Nav.css";
 import Search from "../../images/search-icon.svg";
 
-export default function Nav({ user, onLoginClick, onRegisterClick }) {
+export default function Nav({
+  user,
+  onLoginClick,
+  onRegisterClick,
+  onLogoutClick,
+  onCreateAuctionClick
+}) {
   return (
     <>
       <nav className="nav">
@@ -18,7 +24,19 @@ export default function Nav({ user, onLoginClick, onRegisterClick }) {
         </form>
         <div className="nav__acc-buttons">
           {user ? (
-            <span className="nav__user-email">{user.email}</span>
+            <>
+              <span className="nav__user-email">{user.email}</span>
+              <button
+                className="nav__logout-button"
+                type="button"
+                onClick={onLogoutClick}
+              >
+                Log Out
+              </button>
+              <button type="button" onClick={onCreateAuctionClick}>
+                Sell a car
+              </button>
+            </>
           ) : (
             <>
               <button

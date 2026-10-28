@@ -69,3 +69,9 @@
   color: #fff;
   border: 1px solid #333;
 }
+
+.nav__logout-button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #333;
+}
