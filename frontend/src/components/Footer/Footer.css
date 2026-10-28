@@ -1,0 +1,33 @@
+.footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #161616;
+  text-align: center;
+  padding: 50px 0 20px;
+  color: white;
+}
+
+.footer__dev {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.footer__links {
+  margin-top: 10px;
+  display: flex;
+  gap: 1rem;
+}
+
+.footer__icon {
+  width: 2rem;
+  height: 2rem;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.footer__icon:hover {
+  opacity: 1;
+}
