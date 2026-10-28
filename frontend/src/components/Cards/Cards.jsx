@@ -3,6 +3,7 @@ import "./Cards.css";
 import api from "../../utils/api";
 import { useContext } from "react";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
+import { Link } from "react-router-dom";
 
 export default function Cards({ onEdit, onDeleted }) {
   const { user, token } = useContext(CurrentUserContext);
@@ -59,28 +60,34 @@ export default function Cards({ onEdit, onDeleted }) {
                 </button>
               </div>
             )}
-            {auction.image_url && (
-              <img
-                className="cards__image"
-                src={auction.image_url}
-                alt={`${auction.title} car`}
-                loading="lazy"
-              />
-            )}
-            <h3 className="cards__title">{auction.title}</h3>
-            <p>
-              {auction.model_year} · {Number(auction.mileage).toLocaleString()}{" "}
-              miles
-            </p>
-            <p>{auction.description}</p>
-            <p className="cards__price">
-              Starting price:{" "}
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(Number(auction.starting_price))}
-            </p>
-            <p>Ends: {new Date(auction.ends_at).toLocaleString()}</p>
+
+            <Link
+              className="cards__details-link"
+              to={`/auctions/${auction.id}`}
+            >
+              {auction.image_url && (
+                <img
+                  className="cards__image"
+                  src={auction.image_url}
+                  alt={`${auction.title} car`}
+                  loading="lazy"
+                />
+              )}
+              <h3 className="cards__title">{auction.title}</h3>
+              <p>
+                {auction.model_year} ·{" "}
+                {Number(auction.mileage).toLocaleString()} miles
+              </p>
+              <p>{auction.description}</p>
+              <p className="cards__price">
+                Starting price:{" "}
+                {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(Number(auction.starting_price))}
+              </p>
+              <p>Ends: {new Date(auction.ends_at).toLocaleString()}</p>
+            </Link>
           </article>
         ))
       )}

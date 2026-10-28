@@ -7,6 +7,8 @@ import Login from "../Login/Login";
 import Register from "../Register/Register";
 import CreateAuction from "../CreateAuction/CreateAuction";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
+import { Navigate, Route, Routes } from "react-router-dom";
+import AuctionDetails from "../AuctionDetails/AuctionDetails";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -52,11 +54,25 @@ export default function App() {
           />
         )}
 
-        <Cards
-          key={auctionsVersion}
-          onEdit={setEditingAuction}
-          onDeleted={() => setAuctionsVersion((version) => version + 1)}
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Cards
+                key={auctionsVersion}
+                onEdit={setEditingAuction}
+                onDeleted={() => setAuctionsVersion((version) => version + 1)}
+              />
+            }
+          />
+          <Route
+            path="/auctions/:id"
+            element={
+              <AuctionDetails onLoginClick={() => setOpenModal("login")} />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
         <Footer />
       </CurrentUserContext.Provider>
     </>
