@@ -8,6 +8,8 @@ export default function Nav({
   onRegisterClick,
   onLogoutClick,
   onCreateAuctionClick,
+  onMyAuctionsClick,
+  onMyBidsClick,
 }) {
   const { user } = useContext(CurrentUserContext);
 
@@ -20,11 +22,26 @@ export default function Nav({
             className="nav__search-input"
             type="text"
             placeholder="Search..."
-          ></input>
+          />
           <button className="nav__search-button" type="submit">
-            <img className="nav__search-icon" src={Search} />
+            <img className="nav__search-icon" src={Search} alt="Search" />
           </button>
         </form>
+
+        {user && (
+          <div className="nav__user-actions">
+            <button className="nav_act-button" type="button" onClick={onMyAuctionsClick}>
+              My Auctions
+            </button>
+            <button className="nav_act-button" type="button" onClick={onMyBidsClick}>
+              My Bids
+            </button>
+            <button className="nav_act-button" type="button" onClick={onCreateAuctionClick}>
+              Sell a car
+            </button>
+          </div>
+        )}
+
         <div className="nav__acc-buttons">
           {user ? (
             <>
@@ -35,9 +52,6 @@ export default function Nav({
                 onClick={onLogoutClick}
               >
                 Log Out
-              </button>
-              <button type="button" onClick={onCreateAuctionClick}>
-                Sell a car
               </button>
             </>
           ) : (
