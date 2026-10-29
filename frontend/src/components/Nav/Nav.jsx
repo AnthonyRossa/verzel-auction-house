@@ -2,7 +2,8 @@ import "./Nav.css";
 import Search from "../../images/search-icon.svg";
 import { useContext } from "react";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Nav({
   onLoginClick,
@@ -12,16 +13,47 @@ export default function Nav({
 }) {
   const { user } = useContext(CurrentUserContext);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const title = String(new FormData(form).get("search") ?? "").trim();
+
+    form.elements.search.value = "";
+
+    const pathname = location.pathname.startsWith("/auctions/")
+      ? "/"
+      : location.pathname;
+
+    navigate({
+      pathname,
+      search: title ? `?search=${encodeURIComponent(title)}` : "",
+    });
+  }
 
   return (
     <>
       <nav className="nav">
-        <h1 className="nav__title">Auto Bids</h1>
-        <form className="nav__search-form">
+        <h1 className="nav__title">
+          <Link to="/">Auto Bids</Link>
+        </h1>
+        {location.pathname !== "/" && (
+          <button
+            className="nav__home-button"
+            type="button"
+            onClick={() => navigate("/")}
+          >
+            Return to Home Page
+          </button>
+        )}
+        <form className="nav__search-form" onSubmit={handleSearchSubmit}>
           <input
             className="nav__search-input"
-            type="text"
-            placeholder="Search..."
+            name="search"
+            type="search"
+            placeholder="Search by title..."
           />
           <button className="nav__search-button" type="submit">
             <img className="nav__search-icon" src={Search} alt="Search" />
@@ -33,14 +65,19 @@ export default function Nav({
             <button
               className="nav_act-button"
               type="button"
-              onClick={() => navigate("/my-auctions")}
+              onClick={() =>
+                navigate({ pathname: "/my-auctions", search: location.search })
+              }
             >
               My Auctions
             </button>
+
             <button
               className="nav_act-button"
               type="button"
-              onClick={() => navigate("/my-bids")}
+              onClick={() =>
+                navigate({ pathname: "/my-bids", search: location.search })
+              }
             >
               My Bids
             </button>

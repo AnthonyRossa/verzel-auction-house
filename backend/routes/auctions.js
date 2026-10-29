@@ -8,7 +8,24 @@ module.exports = (pool) => {
   router.get("/", async (_req, res) => {
     try {
       const result = await pool.query(
-        "SELECT id, seller_id, title, description, starting_price, image_url, mileage, model_year, ends_at, created_at FROM auctions ORDER BY created_at DESC",
+        `SELECT
+   a.id,
+   a.seller_id,
+   a.title,
+   a.description,
+   a.starting_price,
+   a.image_url,
+   a.mileage,
+   a.model_year,
+   a.ends_at,
+   a.created_at,
+   (
+     SELECT MAX(b.amount)
+     FROM bids b
+     WHERE b.auction_id = a.id
+   ) AS current_bid
+ FROM auctions a
+ ORDER BY a.created_at DESC`,
       );
       res.json(result.rows);
     } catch (error) {
@@ -44,19 +61,28 @@ module.exports = (pool) => {
 
   //edit or update auction by id
   router.put("/:id", authenticateToken, async (req, res) => {
-    const { id } = req.params;
     const {
       title,
       description = null,
+      image_url,
+      mileage,
+      model_year,
       starting_price,
       ends_at,
     } = req.body ?? {};
 
     if (
-      !/^\d+$/.test(id) ||
+      !/^\d+$/.test(req.params.id) ||
       typeof title !== "string" ||
       !title.trim() ||
       (description !== null && typeof description !== "string") ||
+      typeof image_url !== "string" ||
+      !image_url.trim() ||
+      !Number.isInteger(mileage) ||
+      mileage < 0 ||
+      !Number.isInteger(model_year) ||
+      model_year < 1886 ||
+      model_year > 2100 ||
       typeof starting_price !== "number" ||
       !Number.isFinite(starting_price) ||
       starting_price < 0 ||
@@ -69,10 +95,27 @@ module.exports = (pool) => {
     try {
       const result = await pool.query(
         `UPDATE auctions
-       SET title = $1, description = $2, starting_price = $3, ends_at = $4
-       WHERE id = $5 AND seller_id = $6
-       RETURNING id, image_url, mileage, model_year, title, description, starting_price, ends_at, created_at`,
-        [title.trim(), description, starting_price, ends_at, id, req.userId],
+       SET title = $1,
+           description = $2,
+           image_url = $3,
+           mileage = $4,
+           model_year = $5,
+           starting_price = $6,
+           ends_at = $7
+       WHERE id = $8 AND seller_id = $9
+       RETURNING id, seller_id, title, description, image_url, mileage,
+                 model_year, starting_price, ends_at, created_at`,
+        [
+          title.trim(),
+          description,
+          image_url.trim(),
+          mileage,
+          model_year,
+          starting_price,
+          ends_at,
+          req.params.id,
+          req.userId,
+        ],
       );
 
       if (result.rows.length === 0) {
@@ -157,31 +200,30 @@ module.exports = (pool) => {
     }
   });
 
-
   //delete auction
   router.delete("/:id", authenticateToken, async (req, res) => {
-  if (!/^\d+$/.test(req.params.id)) {
-    return res.status(400).json({ error: "Invalid auction ID" });
-  }
-
-  try {
-    const result = await pool.query(
-      `DELETE FROM auctions
-       WHERE id = $1 AND seller_id = $2
-       RETURNING id`,
-      [req.params.id, req.userId],
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Auction not found" });
+    if (!/^\d+$/.test(req.params.id)) {
+      return res.status(400).json({ error: "Invalid auction ID" });
     }
 
-    res.json({ success: true });
-  } catch (error) {
-    console.error("Failed to delete auction", error);
-    res.status(500).json({ error: "Failed to delete auction" });
-  }
-});
+    try {
+      const result = await pool.query(
+        `DELETE FROM auctions
+       WHERE id = $1 AND seller_id = $2
+       RETURNING id`,
+        [req.params.id, req.userId],
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: "Auction not found" });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Failed to delete auction", error);
+      res.status(500).json({ error: "Failed to delete auction" });
+    }
+  });
 
   return router;
 };

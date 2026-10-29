@@ -3,50 +3,95 @@ import "./Cards.css";
 import api from "../../utils/api";
 import { useContext } from "react";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Cards({ onEdit, onDeleted }) {
   const { user, token } = useContext(CurrentUserContext);
   const [auctions, setAuctions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  function clearSearch() {
+    navigate({ pathname: location.pathname, search: "" });
+  }
+  const searchTerm =
+    new URLSearchParams(location.search).get("search")?.trim().toLowerCase() ??
+    "";
+
+  const filteredAuctions = auctions.filter((auction) =>
+    auction.title.toLowerCase().includes(searchTerm),
+  );
 
   useEffect(() => {
     const controller = new AbortController();
+    let requestInProgress = false;
 
-    async function loadAuctions() {
+    async function refreshAuctions() {
+      if (requestInProgress) return;
+      requestInProgress = true;
+
       try {
         const data = await api.getAuctions({ signal: controller.signal });
         setAuctions(data);
-      } catch (error) {
-        if (error.name !== "AbortError") {
+        setError("");
+      } catch (err) {
+        if (err.name !== "AbortError") {
           setError("Could not load auctions. Please try again.");
         }
       } finally {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
+        requestInProgress = false;
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     }
 
-    loadAuctions();
-    return () => controller.abort();
+    refreshAuctions();
+    const intervalId = window.setInterval(refreshAuctions, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+      controller.abort();
+    };
   }, []);
 
   if (isLoading) return <main className="cards">Loading auctions...</main>;
-  if (error) return <main className="cards">{error}</main>;
+  if (error && auctions.length === 0) {
+    return (
+      <main className="cards" role="alert">
+        {error}
+      </main>
+    );
+  }
 
   return (
     <main className="cards">
-      {auctions.length === 0 ? (
-        <p>No auctions are available yet.</p>
+      {searchTerm && (
+        <section className="search-results">
+          <p>Search results for “{searchTerm}”</p>
+          <button type="button" onClick={clearSearch}>
+            Back to all results
+          </button>
+        </section>
+      )}
+      {filteredAuctions.length === 0 ? (
+        <p>
+          {searchTerm
+            ? `No auctions match "${searchTerm}".`
+            : "No auctions are available yet."}
+        </p>
       ) : (
-        auctions.map((auction) => (
+        filteredAuctions.map((auction) => (
           <article className="cards__card" key={auction.id}>
             <Link
               className="cards__details-link"
               to={`/auctions/${auction.id}`}
             >
+              {error && (
+                <p className="cards__error" role="alert">
+                  {error}
+                </p>
+              )}
               {auction.image_url && (
                 <img
                   className="cards__image"
@@ -61,12 +106,14 @@ export default function Cards({ onEdit, onDeleted }) {
                 {Number(auction.mileage).toLocaleString()} miles
               </p>
               <p>{auction.description}</p>
-              <p className="cards__price">
-                Starting price:{" "}
+              <p className="cards__current-bid">
+                Current bid:{" "}
                 {new Intl.NumberFormat("en-US", {
                   style: "currency",
                   currency: "USD",
-                }).format(Number(auction.starting_price))}
+                }).format(
+                  Number(auction.current_bid ?? auction.starting_price),
+                )}
               </p>
               <p>Ends: {new Date(auction.ends_at).toLocaleString()}</p>
             </Link>

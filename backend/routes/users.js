@@ -86,7 +86,7 @@ module.exports = (pool) => {
     const token = jwt.sign(
       { sub: String(user.id) },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" },
+      { expiresIn: "30d" },
     );
 
     return res.json({

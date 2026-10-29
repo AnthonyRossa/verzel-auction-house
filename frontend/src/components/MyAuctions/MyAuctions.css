@@ -90,3 +90,105 @@
 .my-auctions__actions button:last-child:hover {
   background: #fef2f2;
 }
+
+.delete-auction__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.delete-auction {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.delete-auction h2 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.delete-auction p {
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.delete-auction p[role="alert"] {
+  color: #dc2626;
+}
+
+.delete-auction__close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  background: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.delete-auction__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.delete-auction__actions button {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.delete-auction__actions .delete-auction__confirm-button {
+  border-color: #dc2626;
+  background: #dc2626;
+  color: #fff;
+}
+
+.delete-auction__actions button:disabled,
+.delete-auction__close-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.my-auctions__info .my-auctions__current-bid {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.search-results {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  border-radius: 6px;
+}
+
+.search-results p {
+  margin: 0;
+}
+
+.search-results button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
