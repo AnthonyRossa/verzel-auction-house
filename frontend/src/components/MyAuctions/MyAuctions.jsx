@@ -3,10 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import "./MyAuctions.css";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
-import DeleteAuction from "../DeleteAuction/DeleteAuction";
+import ConfirmActionModal from "../ConfirmActionModal/ConfirmActionModal";
 
 export default function MyAuctions({ onEdit, onDeleted }) {
-  const { user } = useContext(CurrentUserContext);
+  const { user, token } = useContext(CurrentUserContext);
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -156,10 +156,15 @@ export default function MyAuctions({ onEdit, onDeleted }) {
         </ul>
       )}
       {auctionToDelete && (
-        <DeleteAuction
-          auction={auctionToDelete}
+        <ConfirmActionModal
+          title="Delete auction?"
+          message={`Are you sure you want to delete "${auctionToDelete.title}"? This action cannot be undone.`}
+          confirmText="Delete auction"
           onClose={() => setAuctionToDelete(null)}
-          onDeleted={onDeleted}
+          onConfirm={async () => {
+            await api.deleteAuction(auctionToDelete.id, token);
+            onDeleted();
+          }}
         />
       )}
     </main>

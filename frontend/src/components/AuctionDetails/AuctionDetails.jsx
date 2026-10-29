@@ -61,8 +61,9 @@ export default function AuctionDetails({ onLoginClick }) {
     };
   }, [id, token]);
 
-  const highestBid = bids.length
-    ? Number(bids[0].amount)
+  const activeBids = bids.filter((bid) => !bid.withdrawn_at);
+  const highestBid = activeBids.length
+    ? Number(activeBids[0].amount)
     : Number(auction?.starting_price);
 
   async function handleBidSubmit(event) {
@@ -187,6 +188,7 @@ export default function AuctionDetails({ onLoginClick }) {
                 <time dateTime={bid.created_at}>
                   {new Date(bid.created_at).toLocaleString()}
                 </time>
+                {bid.withdrawn_at && <span>Withdrawn</span>}
               </li>
             ))}
           </ol>

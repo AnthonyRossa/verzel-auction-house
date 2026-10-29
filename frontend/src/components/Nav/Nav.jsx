@@ -1,9 +1,10 @@
 import "./Nav.css";
 import Search from "../../images/search-icon.svg";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import api from "../../utils/api";
 
 export default function Nav({
   onLoginClick,
@@ -11,9 +12,40 @@ export default function Nav({
   onLogoutClick,
   onCreateAuctionClick,
 }) {
-  const { user } = useContext(CurrentUserContext);
+  const { user, token } = useContext(CurrentUserContext);
+  const [availableBalance, setAvailableBalance] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!user || !token) {
+      setAvailableBalance(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function loadBalance() {
+      try {
+        const wallet = await api.getWallet(token, {
+          signal: controller.signal,
+        });
+        setAvailableBalance(Number(wallet.available_balance));
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Could not load balance", error);
+        }
+      }
+    }
+
+    loadBalance();
+    const intervalId = window.setInterval(loadBalance, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+      controller.abort();
+    };
+  }, [user, token]);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
@@ -95,6 +127,19 @@ export default function Nav({
           {user ? (
             <>
               <span className="nav__user-email">{user.email}</span>
+              <button
+                className="nav__balance-button"
+                type="button"
+                onClick={() => navigate("/balance")}
+              >
+                Balance:{" "}
+                {availableBalance === null
+                  ? "..."
+                  : new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    }).format(availableBalance)}
+              </button>
               <button
                 className="nav__logout-button"
                 type="button"

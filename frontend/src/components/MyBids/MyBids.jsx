@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import "./MyBids.css";
+import ConfirmActionModal from "../ConfirmActionModal/ConfirmActionModal";
 
 function formatPrice(value) {
   return new Intl.NumberFormat("en-US", {
@@ -16,8 +17,28 @@ export default function MyBids() {
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [auctionToWithdraw, setAuctionToWithdraw] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const [withdrawingId, setWithdrawingId] = useState(null);
+
+  async function handleWithdraw(auction) {
+    if (!window.confirm(`Withdraw your leading bid on "${auction.title}"?`)) {
+      return;
+    }
+
+    setError("");
+    setWithdrawingId(String(auction.id));
+
+    try {
+      await api.withdrawBid(auction.id, token);
+      setAuctions(await api.getMyBids(token));
+    } catch (err) {
+      setError(err.message || "Could not withdraw your bid.");
+    } finally {
+      setWithdrawingId(null);
+    }
+  }
 
   function clearSearch() {
     navigate({ pathname: location.pathname, search: "" });
@@ -124,11 +145,37 @@ export default function MyBids() {
                     ? "You’re winning"
                     : "You’ve been outbid"}
                 </p>
+                {Number(auction.my_highest_bid) >=
+                  Number(auction.current_bid ?? auction.starting_price) &&
+                  new Date(auction.ends_at) > new Date() && (
+                    <button
+                      className="my-bids__withdraw-button"
+                      type="button"
+                      onClick={() => setAuctionToWithdraw(auction)}
+                      disabled={withdrawingId === String(auction.id)}
+                    >
+                      {withdrawingId === String(auction.id)
+                        ? "Withdrawing..."
+                        : "Withdraw leading bid"}
+                    </button>
+                  )}
                 <Link to={`/auctions/${auction.id}`}>View auction</Link>
               </div>
             </li>
           ))}
         </ul>
+      )}
+      {auctionToWithdraw && (
+        <ConfirmActionModal
+          title="Withdraw leading bid?"
+          message={`Withdraw your leading bid on "${auctionToWithdraw.title}"? Your reserved balance will be released.`}
+          confirmText="Withdraw bid"
+          onClose={() => setAuctionToWithdraw(null)}
+          onConfirm={async () => {
+            await api.withdrawBid(auctionToWithdraw.id, token);
+            setAuctions(await api.getMyBids(token));
+          }}
+        />
       )}
     </main>
   );

@@ -92,6 +92,25 @@ class Api {
   getMyBids(token, { signal } = {}) {
     return this._makeRequest("/bids/mine", { token, signal });
   }
+
+  getWallet(token, { signal } = {}) {
+    return this._makeRequest("/wallet", { token, signal });
+  }
+
+  topUpWallet(amount, token) {
+    return this._makeRequest("/wallet/top-up", {
+      method: "POST",
+      body: { amount },
+      token,
+    });
+  }
+
+  withdrawBid(auctionId, token) {
+    return this._makeRequest(`/auctions/${auctionId}/bids/withdraw`, {
+      method: "POST",
+      token,
+    });
+  }
 }
 
 const api = new Api(BASE_URL);
