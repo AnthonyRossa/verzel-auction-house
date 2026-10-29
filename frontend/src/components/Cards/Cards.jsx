@@ -43,24 +43,6 @@ export default function Cards({ onEdit, onDeleted }) {
       ) : (
         auctions.map((auction) => (
           <article className="cards__card" key={auction.id}>
-            {user && String(auction.seller_id) === String(user.id) && (
-              <div className="cards__actions">
-                <button type="button" onClick={() => onEdit(auction)}>
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (!window.confirm("Delete this auction?")) return;
-                    await api.deleteAuction(auction.id, token);
-                    onDeleted();
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            )}
-
             <Link
               className="cards__details-link"
               to={`/auctions/${auction.id}`}

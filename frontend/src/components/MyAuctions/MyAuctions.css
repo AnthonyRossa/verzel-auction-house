@@ -1,0 +1,92 @@
+.my-auctions {
+  padding: 1.5rem;
+}
+
+.my-auctions__title {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.my-auctions p[role="alert"] {
+  margin: 0 0 1rem;
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.my-auctions__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.my-auctions__item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.my-auctions__image {
+  width: 140px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.my-auctions__info {
+  flex: 1;
+}
+
+.my-auctions__info h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.my-auctions__info p {
+  margin: 0.15rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.my-auctions__info a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.my-auctions__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.my-auctions__actions button {
+  padding: 0.4rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.my-auctions__actions button:hover {
+  background: #f5f5f5;
+}
+
+.my-auctions__actions button:last-child {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.my-auctions__actions button:last-child:hover {
+  background: #fef2f2;
+}

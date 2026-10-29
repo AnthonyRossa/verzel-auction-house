@@ -2,6 +2,7 @@ import "./Nav.css";
 import Search from "../../images/search-icon.svg";
 import { useContext } from "react";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Nav({
   onLoginClick,
@@ -12,6 +13,7 @@ export default function Nav({
   onMyBidsClick,
 }) {
   const { user } = useContext(CurrentUserContext);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -30,13 +32,25 @@ export default function Nav({
 
         {user && (
           <div className="nav__user-actions">
-            <button className="nav_act-button" type="button" onClick={onMyAuctionsClick}>
+            <button
+              className="nav_act-button"
+              type="button"
+              onClick={() => navigate("/my-auctions")}
+            >
               My Auctions
             </button>
-            <button className="nav_act-button" type="button" onClick={onMyBidsClick}>
+            <button
+              className="nav_act-button"
+              type="button"
+              onClick={onMyBidsClick}
+            >
               My Bids
             </button>
-            <button className="nav_act-button" type="button" onClick={onCreateAuctionClick}>
+            <button
+              className="nav_act-button"
+              type="button"
+              onClick={onCreateAuctionClick}
+            >
               Sell a car
             </button>
           </div>

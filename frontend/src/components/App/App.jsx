@@ -9,6 +9,7 @@ import CreateAuction from "../CreateAuction/CreateAuction";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AuctionDetails from "../AuctionDetails/AuctionDetails";
+import MyAuctions from "../MyAuctions/MyAuctions";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -72,6 +73,16 @@ export default function App() {
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="/my-auctions"
+            element={
+              <MyAuctions
+                key={auctionsVersion}
+                onEdit={setEditingAuction}
+                onDeleted={() => setAuctionsVersion((version) => version + 1)}
+              />
+            }
+          />
         </Routes>
         <Footer />
       </CurrentUserContext.Provider>
