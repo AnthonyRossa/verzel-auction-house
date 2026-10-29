@@ -9,12 +9,15 @@ A vehicle auction app where users can list cars, bid, and track their auctions. 
 All these users have balances, listed auctions, and bids. Feel free to create a new user or use these.
 
 E-mail: render1@test.com
+
 Password: testandorender1
 
 E-mail: render2@test.com
+
 Password: testandorender2
 
 E-mail: render3@test.com
+
 Password: testandorender3
 
 ## Features
