@@ -6,7 +6,9 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-const pool = new Pool();
+const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : new Pool();
 const bidsRouter = require("./routes/bids")(pool);
 const auctionsRouter = require("./routes/auctions")(pool);
 const usersRouter = require("./routes/users")(pool);
