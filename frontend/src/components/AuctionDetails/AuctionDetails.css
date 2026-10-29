@@ -112,3 +112,21 @@
   color: #666;
   font-size: 0.85rem;
 }
+
+.bid-status {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.bid-status--winning {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.bid-status--losing {
+  color: #991b1b;
+  background: #fee2e2;
+}

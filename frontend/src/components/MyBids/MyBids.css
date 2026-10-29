@@ -54,3 +54,43 @@
     flex-direction: column;
   }
 }
+.bid-status {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.bid-status--winning {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.bid-status--losing {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.search-results {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  border-radius: 6px;
+}
+
+.search-results p {
+  margin: 0;
+}
+
+.search-results button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}

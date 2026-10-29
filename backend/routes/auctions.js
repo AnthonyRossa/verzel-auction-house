@@ -8,7 +8,24 @@ module.exports = (pool) => {
   router.get("/", async (_req, res) => {
     try {
       const result = await pool.query(
-        "SELECT id, seller_id, title, description, starting_price, image_url, mileage, model_year, ends_at, created_at FROM auctions ORDER BY created_at DESC",
+        `SELECT
+   a.id,
+   a.seller_id,
+   a.title,
+   a.description,
+   a.starting_price,
+   a.image_url,
+   a.mileage,
+   a.model_year,
+   a.ends_at,
+   a.created_at,
+   (
+     SELECT MAX(b.amount)
+     FROM bids b
+     WHERE b.auction_id = a.id
+   ) AS current_bid
+ FROM auctions a
+ ORDER BY a.created_at DESC`,
       );
       res.json(result.rows);
     } catch (error) {

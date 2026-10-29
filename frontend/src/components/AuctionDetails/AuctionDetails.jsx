@@ -20,28 +20,46 @@ export default function AuctionDetails({ onLoginClick }) {
   const [error, setError] = useState("");
   const [bidError, setBidError] = useState("");
   const [placingBid, setPlacingBid] = useState(false);
+  const [myAuctionBid, setMyAuctionBid] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
+    let isLoadingRequest = false;
 
-    async function loadAuction() {
+    async function refreshAuction() {
+      if (isLoadingRequest) return;
+      isLoadingRequest = true;
+
       try {
-        const [auctionData, bidData] = await Promise.all([
+        const [auctionData, bidData, myBids] = await Promise.all([
           api.getAuction(id, { signal: controller.signal }),
           api.getBids(id, { signal: controller.signal }),
+          token ? api.getMyBids(token, { signal: controller.signal }) : [],
         ]);
+
         setAuction(auctionData);
         setBids(bidData);
+        setMyAuctionBid(
+          myBids.find((bidAuction) => String(bidAuction.id) === String(id)) ??
+            null,
+        );
+        setError("");
       } catch (err) {
         if (err.name !== "AbortError") setError(err.message);
       } finally {
+        isLoadingRequest = false;
         if (!controller.signal.aborted) setLoading(false);
       }
     }
 
-    loadAuction();
-    return () => controller.abort();
-  }, [id]);
+    refreshAuction();
+    const intervalId = window.setInterval(refreshAuction, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+      controller.abort();
+    };
+  }, [id, token]);
 
   const highestBid = bids.length
     ? Number(bids[0].amount)
@@ -57,7 +75,16 @@ export default function AuctionDetails({ onLoginClick }) {
 
     try {
       await api.placeBid(id, amount, token);
-      setBids(await api.getBids(id));
+      const [updatedBids, myBids] = await Promise.all([
+        api.getBids(id),
+        api.getMyBids(token),
+      ]);
+
+      setBids(updatedBids);
+      setMyAuctionBid(
+        myBids.find((bidAuction) => String(bidAuction.id) === String(id)) ??
+          null,
+      );
       form.reset();
     } catch (err) {
       setBidError(err.message);
@@ -67,15 +94,14 @@ export default function AuctionDetails({ onLoginClick }) {
   }
 
   if (loading) return <main>Loading auction...</main>;
-  if (error) return <main role="alert">{error}</main>;
+  if (error && !auction) return <main role="alert">{error}</main>;
   if (!auction) return <main>Auction not found.</main>;
 
   const isOwner = user && String(user.id) === String(auction.seller_id);
 
   return (
     <main className="auction-details">
-      <Link to="/">Back to auctions</Link>
-
+      {error && <p role="alert">Could not refresh auction: {error}</p>}
       {auction.image_url && (
         <img
           className="auction-details__image"
@@ -95,6 +121,19 @@ export default function AuctionDetails({ onLoginClick }) {
       <p className="auction-details__text">
         Current bid: {formatPrice(highestBid)}
       </p>
+      {myAuctionBid && (
+        <p
+          className={`bid-status ${
+            Number(myAuctionBid.my_highest_bid) >= highestBid
+              ? "bid-status--winning"
+              : "bid-status--losing"
+          }`}
+        >
+          {Number(myAuctionBid.my_highest_bid) >= highestBid
+            ? "You’re winning"
+            : "You’ve been outbid"}
+        </p>
+      )}
       <p className="auction-details__text">
         Ends: {new Date(auction.ends_at).toLocaleString()}
       </p>
