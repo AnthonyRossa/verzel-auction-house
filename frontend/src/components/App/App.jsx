@@ -11,6 +11,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AuctionDetails from "../AuctionDetails/AuctionDetails";
 import MyAuctions from "../MyAuctions/MyAuctions";
 import MyBids from "../MyBids/MyBids";
+import Wallet from "../Wallet/Wallet";
 
 export default function App() {
   const [session, setSession] = useState(() => {
@@ -28,16 +29,16 @@ export default function App() {
   const [auctionsVersion, setAuctionsVersion] = useState(0);
 
   useEffect(() => {
-  try {
-    if (session) {
-      localStorage.setItem("auction-session", JSON.stringify(session));
-    } else {
-      localStorage.removeItem("auction-session");
+    try {
+      if (session) {
+        localStorage.setItem("auction-session", JSON.stringify(session));
+      } else {
+        localStorage.removeItem("auction-session");
+      }
+    } catch (error) {
+      console.error("Could not save session", error);
     }
-  } catch (error) {
-    console.error("Could not save session", error);
-  }
-}, [session]);
+  }, [session]);
 
   return (
     <>
@@ -105,6 +106,7 @@ export default function App() {
             }
           />
           <Route path="/my-bids" element={<MyBids />} />
+          <Route path="/balance" element={<Wallet />} />{" "}
         </Routes>
         <Footer />
       </CurrentUserContext.Provider>

@@ -1,4 +1,4 @@
-.delete-auction__overlay {
+.confirm-modal__overlay {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -9,7 +9,7 @@
   background: rgba(0, 0, 0, 0.5);
 }
 
-.delete-auction {
+.confirm-modal {
   position: relative;
   width: 100%;
   max-width: 500px;
@@ -19,21 +19,24 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.delete-auction h2 {
+.confirm-modal h2 {
   margin: 0 0 1rem;
+  color: #1a1a1a;
   font-size: 1.5rem;
+  font-weight: 600;
 }
 
-.delete-auction p {
+.confirm-modal p {
   margin-bottom: 1rem;
   color: #666;
 }
 
-.delete-auction .delete-auction__error {
+.confirm-modal .confirm-modal__error {
   color: #dc2626;
+  font-size: 0.85rem;
 }
 
-.delete-auction__close-button {
+.confirm-modal__close {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -44,29 +47,34 @@
   font-size: 1.5rem;
 }
 
-.delete-auction__actions {
+.confirm-modal__actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
   margin-top: 1.5rem;
 }
 
-.delete-auction__actions button {
-  padding: 0.6rem 1rem;
+.confirm-modal__actions button {
+  padding: 0.65rem 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   background: #fff;
   cursor: pointer;
+  font: inherit;
 }
 
-.delete-auction__actions .delete-auction__confirm-button {
-  border-color: #dc2626;
-  background: #dc2626;
+.confirm-modal__actions .confirm-modal__confirm {
+  border-color: #3b82f6;
+  background: #3b82f6;
   color: #fff;
 }
 
-.delete-auction__actions button:disabled,
-.delete-auction__close-button:disabled {
+.confirm-modal__actions .confirm-modal__confirm:hover {
+  background: #2563eb;
+}
+
+.confirm-modal__actions button:disabled,
+.confirm-modal__close:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

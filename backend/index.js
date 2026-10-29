@@ -12,6 +12,7 @@ const pool = process.env.DATABASE_URL
 const bidsRouter = require("./routes/bids")(pool);
 const auctionsRouter = require("./routes/auctions")(pool);
 const usersRouter = require("./routes/users")(pool);
+const walletRouter = require("./routes/wallet")(pool);
 const port = process.env.PORT || 3000;
 
 app.get("/api/health", async (_req, res) => {
@@ -38,6 +39,7 @@ app.use("/api/auctions", auctionsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/auctions/:id/bids", bidsRouter);
 app.use("/api/bids", bidsRouter);
+app.use("/api/wallet", walletRouter);
 
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}`);

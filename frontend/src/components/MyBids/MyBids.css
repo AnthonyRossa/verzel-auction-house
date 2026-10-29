@@ -94,3 +94,25 @@
   background: #fff;
   cursor: pointer;
 }
+
+.my-bids__withdraw-button {
+  margin: 0.5rem 0;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #dc2626;
+  border-radius: 4px;
+  background: #fff;
+  color: #b91c1c;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.my-bids__withdraw-button:hover {
+  background: #fef2f2;
+}
+
+.my-bids__withdraw-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
