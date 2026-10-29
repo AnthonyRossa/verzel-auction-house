@@ -1,24 +1,15 @@
 import { useEffect, useState } from "react";
 import "./Cards.css";
 import api from "../../utils/api";
-import { useContext } from "react";
-import CurrentUserContext from "../../contexts/CurrentUserContext";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import useTitleSearch from "../../hooks/useTitleSearch";
+import SearchResults from "../SearchResults/SearchResults";
 
-export default function Cards({ onEdit, onDeleted }) {
-  const { user, token } = useContext(CurrentUserContext);
+export default function Cards() {
   const [auctions, setAuctions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  function clearSearch() {
-    navigate({ pathname: location.pathname, search: "" });
-  }
-  const searchTerm =
-    new URLSearchParams(location.search).get("search")?.trim().toLowerCase() ??
-    "";
+  const { searchTerm, clearSearch } = useTitleSearch();
 
   const filteredAuctions = auctions.filter((auction) =>
     auction.title.toLowerCase().includes(searchTerm),
@@ -66,16 +57,14 @@ export default function Cards({ onEdit, onDeleted }) {
 
   return (
     <main className="cards">
-      {searchTerm && (
-        <section className="search-results">
-          <p>Search results for “{searchTerm}”</p>
-          <button type="button" onClick={clearSearch}>
-            Back to all results
-          </button>
-        </section>
+      <SearchResults searchTerm={searchTerm} onClear={clearSearch} />
+      {error && (
+        <p className="cards__error" role="alert">
+          {error}
+        </p>
       )}
       {filteredAuctions.length === 0 ? (
-        <p>
+        <p className="cards__empty">
           {searchTerm
             ? `No auctions match "${searchTerm}".`
             : "No auctions are available yet."}
@@ -87,11 +76,6 @@ export default function Cards({ onEdit, onDeleted }) {
               className="cards__details-link"
               to={`/auctions/${auction.id}`}
             >
-              {error && (
-                <p className="cards__error" role="alert">
-                  {error}
-                </p>
-              )}
               {auction.image_url && (
                 <img
                   className="cards__image"
@@ -101,11 +85,11 @@ export default function Cards({ onEdit, onDeleted }) {
                 />
               )}
               <h3 className="cards__title">{auction.title}</h3>
-              <p>
+              <p className="cards__metadata">
                 {auction.model_year} ·{" "}
                 {Number(auction.mileage).toLocaleString()} miles
               </p>
-              <p>{auction.description}</p>
+              <p className="cards__description">{auction.description}</p>
               <p className="cards__current-bid">
                 Current bid:{" "}
                 {new Intl.NumberFormat("en-US", {
@@ -115,7 +99,9 @@ export default function Cards({ onEdit, onDeleted }) {
                   Number(auction.current_bid ?? auction.starting_price),
                 )}
               </p>
-              <p>Ends: {new Date(auction.ends_at).toLocaleString()}</p>
+              <p className="cards__ends">
+                Ends: {new Date(auction.ends_at).toLocaleString()}
+              </p>
             </Link>
           </article>
         ))

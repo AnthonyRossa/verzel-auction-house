@@ -101,7 +101,11 @@ export default function Register({ onClose, onSuccess }) {
             {isLoading ? "Creating account..." : "Create Account"}
           </button>
 
-          {error && <p role="alert">{error}</p>}
+          {error && (
+            <p className="register__error" role="alert">
+              {error}
+            </p>
+          )}
         </form>
       </section>
     </div>

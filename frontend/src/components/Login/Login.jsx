@@ -30,54 +30,61 @@ export default function Login({ onLogin, onClose }) {
     }
   }
   return (
-    <>
-      <div className="login" onMouseDown={onClose}>
-        <div
-          className="login__modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="login-title"
-          onMouseDown={(event) => event.stopPropagation()}
+    <div className="login" onMouseDown={onClose}>
+      <div
+        className="login__modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="login-title"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <button
+          className="login__close-button"
+          type="button"
+          onClick={onClose}
         >
-          <button className="login__close-button" type="button" onClick={onClose}>
-            Close
+          Close
+        </button>
+        <h3 className="login__title" id="login-title">
+          Login
+        </h3>
+        <form className="login__form" onSubmit={handleSubmit}>
+          <label className="login__input-title" htmlFor="email">
+            E-mail
+          </label>
+          <input
+            className="login__input"
+            id="email"
+            name="email"
+            type="email"
+            placeholder="E-mail"
+            required
+          />
+          <label className="login__input-title" htmlFor="password">
+            Password
+          </label>
+          <input
+            className="login__input"
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+            required
+          />
+          <button
+            className="login__button"
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Log in"}
           </button>
-          <h3 className="login__title" id="login-title">Login</h3>
-          <form className="login__form" onSubmit={handleSubmit}>
-            <label className="login__input-title" htmlFor="email">
-              E-mail
-            </label>
-            <input
-              className="login__input"
-              id="email"
-              name="email"
-              type="email"
-              placeholder="E-mail"
-              required
-            />
-            <label className="login__input-title" htmlFor="password">
-              Password
-            </label>
-            <input
-              className="login__input"
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-            />
-            <button
-              className="login__button"
-              type="submit"
-              disabled={isLoading}
-              
-            >
-              {isLoading ? "Logging in..." : "Log in"}
-            </button>
-            {error && <p role="alert">{error}</p>}
-          </form>
-        </div>
+          {error && (
+            <p className="login__error" role="alert">
+              {error}
+            </p>
+          )}
+        </form>
       </div>
-    </>
+    </div>
   );
 }

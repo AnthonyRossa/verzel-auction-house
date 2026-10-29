@@ -18,10 +18,7 @@ export default function Wallet() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    if (!user || !token) {
-      setLoading(false);
-      return;
-    }
+    if (!user || !token) return undefined;
 
     const controller = new AbortController();
 
@@ -57,29 +54,42 @@ export default function Wallet() {
     }
   }
 
-  if (!user) return <main>Please log in to manage your balance.</main>;
-  if (loading) return <main>Loading balance...</main>;
+  if (!user) {
+    return <main className="wallet">Please log in to manage your balance.</main>;
+  }
+  if (loading) return <main className="wallet">Loading balance...</main>;
 
   return (
     <main className="wallet">
-      <h1>Balance</h1>
-      {error && <p role="alert">{error}</p>}
+      <h1 className="wallet__title">Balance</h1>
+      {error && (
+        <p className="wallet__error" role="alert">
+          {error}
+        </p>
+      )}
 
       {balance && (
-        <dl>
-          <dt>Total balance</dt>
-          <dd>{formatMoney(balance.total_balance)}</dd>
-          <dt>Committed to leading bids</dt>
-          <dd>{formatMoney(balance.committed_balance)}</dd>
-          <dt>Available balance</dt>
-          <dd>{formatMoney(balance.available_balance)}</dd>
+        <dl className="wallet__summary">
+          <dt className="wallet__term">Total balance</dt>
+          <dd className="wallet__value">{formatMoney(balance.total_balance)}</dd>
+          <dt className="wallet__term">Committed to leading bids</dt>
+          <dd className="wallet__value">
+            {formatMoney(balance.committed_balance)}
+          </dd>
+          <dt className="wallet__term wallet__term--available">
+            Available balance
+          </dt>
+          <dd className="wallet__value wallet__value--available">
+            {formatMoney(balance.available_balance)}
+          </dd>
         </dl>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form className="wallet__form" onSubmit={handleSubmit}>
+        <label className="wallet__label">
           Add demo balance
           <input
+            className="wallet__input"
             name="amount"
             type="number"
             min="0.01"
@@ -88,7 +98,7 @@ export default function Wallet() {
             required
           />
         </label>
-        <button type="submit" disabled={adding}>
+        <button className="wallet__submit" type="submit" disabled={adding}>
           {adding ? "Adding..." : "Add balance"}
         </button>
       </form>
