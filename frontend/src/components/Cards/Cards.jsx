@@ -1,33 +1,37 @@
 import { useEffect, useState } from "react";
 import "./Cards.css";
 import api from "../../utils/api";
+import { useContext } from "react";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
+import { Link } from "react-router-dom";
 
-export default function Cards() {
+export default function Cards({ onEdit, onDeleted }) {
+  const { user, token } = useContext(CurrentUserContext);
   const [auctions, setAuctions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-useEffect(() => {
-  const controller = new AbortController();
+  useEffect(() => {
+    const controller = new AbortController();
 
-  async function loadAuctions() {
-    try {
-      const data = await api.getAuctions({ signal: controller.signal });
-      setAuctions(data);
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        setError("Could not load auctions. Please try again.");
-      }
-    } finally {
-      if (!controller.signal.aborted) {
-        setIsLoading(false);
+    async function loadAuctions() {
+      try {
+        const data = await api.getAuctions({ signal: controller.signal });
+        setAuctions(data);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setError("Could not load auctions. Please try again.");
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     }
-  }
 
-  loadAuctions();
-  return () => controller.abort();
-}, []);
+    loadAuctions();
+    return () => controller.abort();
+  }, []);
 
   if (isLoading) return <main className="cards">Loading auctions...</main>;
   if (error) return <main className="cards">{error}</main>;
@@ -39,16 +43,33 @@ useEffect(() => {
       ) : (
         auctions.map((auction) => (
           <article className="cards__card" key={auction.id}>
-            <h3 className="cards__title">{auction.title}</h3>
-            <p>{auction.description}</p>
-            <p className="cards__price">
-              Starting price:{" "}
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(Number(auction.starting_price))}
-            </p>
-            <p>Ends: {new Date(auction.ends_at).toLocaleString()}</p>
+            <Link
+              className="cards__details-link"
+              to={`/auctions/${auction.id}`}
+            >
+              {auction.image_url && (
+                <img
+                  className="cards__image"
+                  src={auction.image_url}
+                  alt={`${auction.title} car`}
+                  loading="lazy"
+                />
+              )}
+              <h3 className="cards__title">{auction.title}</h3>
+              <p>
+                {auction.model_year} ·{" "}
+                {Number(auction.mileage).toLocaleString()} miles
+              </p>
+              <p>{auction.description}</p>
+              <p className="cards__price">
+                Starting price:{" "}
+                {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(Number(auction.starting_price))}
+              </p>
+              <p>Ends: {new Date(auction.ends_at).toLocaleString()}</p>
+            </Link>
           </article>
         ))
       )}

@@ -1,13 +1,18 @@
 import "./Nav.css";
 import Search from "../../images/search-icon.svg";
+import { useContext } from "react";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Nav({
-  user,
   onLoginClick,
   onRegisterClick,
   onLogoutClick,
-  onCreateAuctionClick
+  onCreateAuctionClick,
 }) {
+  const { user } = useContext(CurrentUserContext);
+  const navigate = useNavigate();
+
   return (
     <>
       <nav className="nav">
@@ -17,11 +22,38 @@ export default function Nav({
             className="nav__search-input"
             type="text"
             placeholder="Search..."
-          ></input>
+          />
           <button className="nav__search-button" type="submit">
-            <img className="nav__search-icon" src={Search} />
+            <img className="nav__search-icon" src={Search} alt="Search" />
           </button>
         </form>
+
+        {user && (
+          <div className="nav__user-actions">
+            <button
+              className="nav_act-button"
+              type="button"
+              onClick={() => navigate("/my-auctions")}
+            >
+              My Auctions
+            </button>
+            <button
+              className="nav_act-button"
+              type="button"
+              onClick={() => navigate("/my-bids")}
+            >
+              My Bids
+            </button>
+            <button
+              className="nav_act-button"
+              type="button"
+              onClick={onCreateAuctionClick}
+            >
+              Sell a car
+            </button>
+          </div>
+        )}
+
         <div className="nav__acc-buttons">
           {user ? (
             <>
@@ -32,9 +64,6 @@ export default function Nav({
                 onClick={onLogoutClick}
               >
                 Log Out
-              </button>
-              <button type="button" onClick={onCreateAuctionClick}>
-                Sell a car
               </button>
             </>
           ) : (

@@ -1,0 +1,138 @@
+import { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import "./AuctionDetails.css"
+import api from "../../utils/api";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
+
+function formatPrice(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(Number(value));
+}
+
+export default function AuctionDetails({ onLoginClick }) {
+  const { id } = useParams();
+  const { user, token } = useContext(CurrentUserContext);
+  const [auction, setAuction] = useState(null);
+  const [bids, setBids] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [bidError, setBidError] = useState("");
+  const [placingBid, setPlacingBid] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadAuction() {
+      try {
+        const [auctionData, bidData] = await Promise.all([
+          api.getAuction(id, { signal: controller.signal }),
+          api.getBids(id, { signal: controller.signal }),
+        ]);
+        setAuction(auctionData);
+        setBids(bidData);
+      } catch (err) {
+        if (err.name !== "AbortError") setError(err.message);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+
+    loadAuction();
+    return () => controller.abort();
+  }, [id]);
+
+  const highestBid = bids.length
+    ? Number(bids[0].amount)
+    : Number(auction?.starting_price);
+
+  async function handleBidSubmit(event) {
+    event.preventDefault();
+    setBidError("");
+    setPlacingBid(true);
+
+    const amount = new FormData(event.currentTarget).get("amount");
+
+    try {
+      await api.placeBid(id, amount, token);
+      setBids(await api.getBids(id));
+      event.currentTarget.reset();
+    } catch (err) {
+      setBidError(err.message);
+    } finally {
+      setPlacingBid(false);
+    }
+  }
+
+  if (loading) return <main>Loading auction...</main>;
+  if (error) return <main role="alert">{error}</main>;
+  if (!auction) return <main>Auction not found.</main>;
+
+  const isOwner = user && String(user.id) === String(auction.seller_id);
+
+  return (
+    <main className="auction-details">
+      <Link to="/">Back to auctions</Link>
+
+      {auction.image_url && (
+        <img
+          className="auction-details__image"
+          src={auction.image_url}
+          alt={`${auction.title} car`}
+        />
+      )}
+
+      <h1 className="auction-details__title">{auction.title}</h1>
+      <p className="auction-details__text">
+        {auction.model_year} · {Number(auction.mileage).toLocaleString()} miles
+      </p>
+      <p className="auction-details__text">{auction.description}</p>
+      <p className="auction-details__text">
+        Starting price: {formatPrice(auction.starting_price)}
+      </p>
+      <p className="auction-details__text">
+        Current bid: {formatPrice(highestBid)}
+      </p>
+      <p className="auction-details__text">
+        Ends: {new Date(auction.ends_at).toLocaleString()}
+      </p>
+
+      {isOwner ? (
+        <p className="auction-details__warning">
+          You cannot bid on your own auction.
+        </p>
+      ) : user ? (
+        <form className="auction-details__form" onSubmit={handleBidSubmit}>
+          <label className="auction-details__label">
+            Your bid
+            <input
+              className="auction-details__input"
+              name="amount"
+              type="number"
+              min={(highestBid + 0.01).toFixed(2)}
+              step="0.01"
+              required
+            />
+          </label>
+          <button
+            className="auction-details__button"
+            type="submit"
+            disabled={placingBid}
+          >
+            {placingBid ? "Placing bid..." : "Place bid"}
+          </button>
+          {bidError && <p role="alert">{bidError}</p>}
+        </form>
+      ) : (
+        <button
+          className="auction-details__text"
+          type="button"
+          onClick={onLoginClick}
+        >
+          Log in to place a bid
+        </button>
+      )}
+    </main>
+  );
+}

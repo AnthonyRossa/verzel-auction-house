@@ -136,5 +136,39 @@ module.exports = (pool) => {
   }
 });
 
+//get current user bids
+router.get("/mine", authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+         a.id,
+         a.title,
+         a.image_url,
+         a.model_year,
+         a.mileage,
+         a.starting_price,
+         a.ends_at,
+         MAX(my_bids.amount) AS my_highest_bid,
+         MAX(my_bids.created_at) AS my_last_bid_at,
+         (
+           SELECT MAX(all_bids.amount)
+           FROM bids all_bids
+           WHERE all_bids.auction_id = a.id
+         ) AS current_bid
+       FROM bids my_bids
+       JOIN auctions a ON a.id = my_bids.auction_id
+       WHERE my_bids.bidder_id = $1
+       GROUP BY a.id
+       ORDER BY my_last_bid_at DESC`,
+      [req.userId],
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Failed to fetch user's bids", error);
+    res.status(500).json({ error: "Failed to fetch your bids" });
+  }
+});
+
   return router;
 };

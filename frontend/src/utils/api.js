@@ -50,6 +50,10 @@ class Api {
     return this._makeRequest("/auctions", { signal });
   }
 
+  getAuction(id, { signal } = {}) {
+    return this._makeRequest(`/auctions/${id}`, { signal });
+  }
+
   createAuction(auctionData, token) {
     return this._makeRequest("/auctions", {
       method: "POST",
@@ -68,6 +72,25 @@ class Api {
 
   getBids(auctionId, { signal } = {}) {
     return this._makeRequest(`/auctions/${auctionId}/bids`, { signal });
+  }
+
+  updateAuction(id, auctionData, token) {
+    return this._makeRequest(`/auctions/${id}`, {
+      method: "PUT",
+      body: auctionData,
+      token,
+    });
+  }
+
+  deleteAuction(id, token) {
+    return this._makeRequest(`/auctions/${id}`, {
+      method: "DELETE",
+      token,
+    });
+  }
+
+  getMyBids(token, { signal } = {}) {
+    return this._makeRequest("/bids/mine", { token, signal });
   }
 }
 
