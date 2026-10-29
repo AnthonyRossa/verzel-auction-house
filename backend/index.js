@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const { Pool } = require("pg");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,16 @@ app.get("/api/health", async (_req, res) => {
     res.status(500).json({ status: "error", database: "disconnected" });
   }
 });
+
+app.use(cors({
+  origin: [
+    "http://localhost:3001",
+    "https://verzel-auction-house-nu.vercel.app",
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 app.use("/api/auctions", auctionsRouter);
 app.use("/api/users", usersRouter);
