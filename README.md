@@ -1,8 +1,21 @@
 # Auto Bids
 
-A vehicle auction app where users can list cars, bid, and track their auctions.
+A vehicle auction app where users can list cars, bid, and track their auctions. Part of Verzel Challenge
 
 **Live app:** [verzel-auction-house-nu.vercel.app](https://verzel-auction-house-nu.vercel.app/)
+
+## Seeded Users for Testing
+
+All these users have balances, listed auctions, and bids. Feel free to create a new user or use these.
+
+E-mail: render1@test.com
+Password: testandorender1
+
+E-mail: render2@test.com
+Password: testandorender2
+
+E-mail: render3@test.com
+Password: testandorender3
 
 ## Features
 
@@ -66,6 +79,4 @@ available at `http://localhost:3000/api/health`.
 
 ## Next steps
 
-Add database migrations and backend tests, improve real-time updates and image
-hosting, and replace demo balance with a secure payment provider before handling
-real money.
+Improve a few design inconsistencies, dark mode, mobile version, integrate with public API, security improvements, fix router inconsistencies.
