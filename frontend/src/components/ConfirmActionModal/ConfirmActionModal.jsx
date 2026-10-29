@@ -48,10 +48,16 @@ export default function ConfirmActionModal({
           ×
         </button>
 
-        <h2 id="confirm-modal-title">{title}</h2>
-        <p>{message}</p>
+        <h2 className="confirm-modal__title" id="confirm-modal-title">
+          {title}
+        </h2>
+        <p className="confirm-modal__message">{message}</p>
 
-        {error && <p className="confirm-modal__error" role="alert">{error}</p>}
+        {error && (
+          <p className="confirm-modal__error" role="alert">
+            {error}
+          </p>
+        )}
 
         <div className="confirm-modal__actions">
           <button type="button" onClick={handleClose} disabled={loading}>

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./AuctionDetails.css";
 import api from "../../utils/api";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
@@ -188,7 +188,9 @@ export default function AuctionDetails({ onLoginClick }) {
                 <time dateTime={bid.created_at}>
                   {new Date(bid.created_at).toLocaleString()}
                 </time>
-                {bid.withdrawn_at && <span>Withdrawn</span>}
+                {bid.withdrawn_at && (
+                  <span className="auction-details__withdrawn">Withdrawn</span>
+                )}
               </li>
             ))}
           </ol>

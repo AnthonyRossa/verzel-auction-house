@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../../utils/api";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import "./MyBids.css";
 import ConfirmActionModal from "../ConfirmActionModal/ConfirmActionModal";
+import useTitleSearch from "../../hooks/useTitleSearch";
+import SearchResults from "../SearchResults/SearchResults";
 
 function formatPrice(value) {
   return new Intl.NumberFormat("en-US", {
@@ -18,44 +20,14 @@ export default function MyBids() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [auctionToWithdraw, setAuctionToWithdraw] = useState(null);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [withdrawingId, setWithdrawingId] = useState(null);
-
-  async function handleWithdraw(auction) {
-    if (!window.confirm(`Withdraw your leading bid on "${auction.title}"?`)) {
-      return;
-    }
-
-    setError("");
-    setWithdrawingId(String(auction.id));
-
-    try {
-      await api.withdrawBid(auction.id, token);
-      setAuctions(await api.getMyBids(token));
-    } catch (err) {
-      setError(err.message || "Could not withdraw your bid.");
-    } finally {
-      setWithdrawingId(null);
-    }
-  }
-
-  function clearSearch() {
-    navigate({ pathname: location.pathname, search: "" });
-  }
-  const searchTerm =
-    new URLSearchParams(location.search).get("search")?.trim().toLowerCase() ??
-    "";
+  const { searchTerm, clearSearch } = useTitleSearch();
 
   const filteredAuctions = auctions.filter((auction) =>
     auction.title.toLowerCase().includes(searchTerm),
   );
 
   useEffect(() => {
-    if (!user || !token) {
-      setLoading(false);
-      return;
-    }
+    if (!user || !token) return undefined;
 
     const controller = new AbortController();
     let isLoadingRequest = false;
@@ -92,16 +64,13 @@ export default function MyBids() {
 
   return (
     <main className="my-bids">
-      <h3>My Bids</h3>
-      {searchTerm && (
-        <section className="search-results">
-          <p>Search results for “{searchTerm}”</p>
-          <button type="button" onClick={clearSearch}>
-            Back to all results
-          </button>
-        </section>
+      <h3 className="my-bids__title">My Bids</h3>
+      <SearchResults searchTerm={searchTerm} onClear={clearSearch} />
+      {error && (
+        <p className="my-bids__error" role="alert">
+          {error}
+        </p>
       )}
-      {error && <p role="alert">{error}</p>}
 
       {!error && filteredAuctions.length === 0 ? (
         <p>
@@ -122,13 +91,15 @@ export default function MyBids() {
               )}
 
               <div className="my-bids__info">
-                <h2>{auction.title}</h2>
-                <p>
+                <h2 className="my-bids__vehicle-title">{auction.title}</h2>
+                <p className="my-bids__metadata">
                   {auction.model_year} ·{" "}
                   {Number(auction.mileage).toLocaleString()} miles
                 </p>
-                <p>Your highest bid: {formatPrice(auction.my_highest_bid)}</p>
-                <p>
+                <p className="my-bids__price">
+                  Your highest bid: {formatPrice(auction.my_highest_bid)}
+                </p>
+                <p className="my-bids__price">
                   Current bid:{" "}
                   {formatPrice(auction.current_bid ?? auction.starting_price)}
                 </p>
@@ -152,14 +123,16 @@ export default function MyBids() {
                       className="my-bids__withdraw-button"
                       type="button"
                       onClick={() => setAuctionToWithdraw(auction)}
-                      disabled={withdrawingId === String(auction.id)}
                     >
-                      {withdrawingId === String(auction.id)
-                        ? "Withdrawing..."
-                        : "Withdraw leading bid"}
+                      Withdraw leading bid
                     </button>
                   )}
-                <Link to={`/auctions/${auction.id}`}>View auction</Link>
+                <Link
+                  className="my-bids__view-link"
+                  to={`/auctions/${auction.id}`}
+                >
+                  View auction
+                </Link>
               </div>
             </li>
           ))}

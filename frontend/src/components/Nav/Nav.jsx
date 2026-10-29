@@ -13,28 +13,36 @@ export default function Nav({
   onCreateAuctionClick,
 }) {
   const { user, token } = useContext(CurrentUserContext);
-  const [availableBalance, setAvailableBalance] = useState(null);
+  const [balance, setBalance] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const availableBalance =
+    balance?.token === token ? balance.available : null;
 
   useEffect(() => {
-    if (!user || !token) {
-      setAvailableBalance(null);
-      return;
-    }
+    if (!user || !token) return undefined;
 
     const controller = new AbortController();
+    let requestInProgress = false;
 
     async function loadBalance() {
+      if (requestInProgress) return;
+      requestInProgress = true;
+
       try {
         const wallet = await api.getWallet(token, {
           signal: controller.signal,
         });
-        setAvailableBalance(Number(wallet.available_balance));
+        setBalance({
+          token,
+          available: Number(wallet.available_balance),
+        });
       } catch (error) {
         if (error.name !== "AbortError") {
           console.error("Could not load balance", error);
         }
+      } finally {
+        requestInProgress = false;
       }
     }
 
@@ -69,7 +77,7 @@ export default function Nav({
     <>
       <nav className="nav">
         <h1 className="nav__title">
-          <Link to="/">Auto Bids</Link>
+          <Link className="nav__title-link" to="/">Auto Bids</Link>
         </h1>
         {location.pathname !== "/" && (
           <button
@@ -95,7 +103,7 @@ export default function Nav({
         {user && (
           <div className="nav__user-actions">
             <button
-              className="nav_act-button"
+              className="nav__action-button"
               type="button"
               onClick={() =>
                 navigate({ pathname: "/my-auctions", search: location.search })
@@ -105,7 +113,7 @@ export default function Nav({
             </button>
 
             <button
-              className="nav_act-button"
+              className="nav__action-button"
               type="button"
               onClick={() =>
                 navigate({ pathname: "/my-bids", search: location.search })
@@ -114,7 +122,7 @@ export default function Nav({
               My Bids
             </button>
             <button
-              className="nav_act-button"
+              className="nav__action-button"
               type="button"
               onClick={onCreateAuctionClick}
             >

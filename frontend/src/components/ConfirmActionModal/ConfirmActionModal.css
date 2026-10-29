@@ -19,14 +19,14 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.confirm-modal h2 {
+.confirm-modal__title {
   margin: 0 0 1rem;
   color: #1a1a1a;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
-.confirm-modal p {
+.confirm-modal__message {
   margin-bottom: 1rem;
   color: #666;
 }

@@ -77,7 +77,7 @@
   cursor: not-allowed;
 }
 
-.register__form [role="alert"] {
+.register__error {
   margin: 0.5rem 0 0;
   color: #b91c1c;
 }

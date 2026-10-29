@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import Nav from "../Nav/Nav";
 import Cards from "../Cards/Cards";
 import Footer from "../Footer/Footer";
@@ -41,75 +40,62 @@ export default function App() {
   }, [session]);
 
   return (
-    <>
-      <CurrentUserContext.Provider
-        value={{
-          user: session?.user ?? null,
-          token: session?.token ?? null,
-        }}
-      >
-        <Nav
-          onCreateAuctionClick={() => setShowCreateAuction(true)}
-          onLoginClick={() => setOpenModal("login")}
-          onRegisterClick={() => setOpenModal("register")}
-          onLogoutClick={() => setSession(null)}
+    <CurrentUserContext.Provider
+      value={{
+        user: session?.user ?? null,
+        token: session?.token ?? null,
+      }}
+    >
+      <Nav
+        onCreateAuctionClick={() => setShowCreateAuction(true)}
+        onLoginClick={() => setOpenModal("login")}
+        onRegisterClick={() => setOpenModal("register")}
+        onLogoutClick={() => setSession(null)}
+      />
+
+      {(showCreateAuction || editingAuction) && (
+        <CreateAuction
+          auction={editingAuction}
+          onClose={() => {
+            setShowCreateAuction(false);
+            setEditingAuction(null);
+          }}
+          onCreated={() => setAuctionsVersion((version) => version + 1)}
         />
+      )}
 
-        {(showCreateAuction || editingAuction) && (
-          <CreateAuction
-            auction={editingAuction}
-            onClose={() => {
-              setShowCreateAuction(false);
-              setEditingAuction(null);
-            }}
-            onCreated={() => setAuctionsVersion((version) => version + 1)}
-          />
-        )}
+      {openModal === "login" && (
+        <Login onLogin={setSession} onClose={() => setOpenModal(null)} />
+      )}
 
-        {openModal === "login" && (
-          <Login onLogin={setSession} onClose={() => setOpenModal(null)} />
-        )}
+      {openModal === "register" && (
+        <Register
+          onClose={() => setOpenModal(null)}
+          onSuccess={() => setOpenModal("login")}
+        />
+      )}
 
-        {openModal === "register" && (
-          <Register
-            onClose={() => setOpenModal(null)}
-            onSuccess={() => setOpenModal("login")}
-          />
-        )}
-
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Cards
-                key={auctionsVersion}
-                onEdit={setEditingAuction}
-                onDeleted={() => setAuctionsVersion((version) => version + 1)}
-              />
-            }
-          />
-          <Route
-            path="/auctions/:id"
-            element={
-              <AuctionDetails onLoginClick={() => setOpenModal("login")} />
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route
-            path="/my-auctions"
-            element={
-              <MyAuctions
-                key={auctionsVersion}
-                onEdit={setEditingAuction}
-                onDeleted={() => setAuctionsVersion((version) => version + 1)}
-              />
-            }
-          />
-          <Route path="/my-bids" element={<MyBids />} />
-          <Route path="/balance" element={<Wallet />} />{" "}
-        </Routes>
-        <Footer />
-      </CurrentUserContext.Provider>
-    </>
+      <Routes>
+        <Route path="/" element={<Cards key={auctionsVersion} />} />
+        <Route
+          path="/auctions/:id"
+          element={<AuctionDetails onLoginClick={() => setOpenModal("login")} />}
+        />
+        <Route
+          path="/my-auctions"
+          element={
+            <MyAuctions
+              key={auctionsVersion}
+              onEdit={setEditingAuction}
+              onDeleted={() => setAuctionsVersion((version) => version + 1)}
+            />
+          }
+        />
+        <Route path="/my-bids" element={<MyBids />} />
+        <Route path="/balance" element={<Wallet />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <Footer />
+    </CurrentUserContext.Provider>
   );
 }

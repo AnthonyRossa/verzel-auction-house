@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../../utils/api";
 import "./MyAuctions.css";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 import ConfirmActionModal from "../ConfirmActionModal/ConfirmActionModal";
+import useTitleSearch from "../../hooks/useTitleSearch";
+import SearchResults from "../SearchResults/SearchResults";
 
 export default function MyAuctions({ onEdit, onDeleted }) {
   const { user, token } = useContext(CurrentUserContext);
@@ -11,15 +13,7 @@ export default function MyAuctions({ onEdit, onDeleted }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [auctionToDelete, setAuctionToDelete] = useState(null);
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  function clearSearch() {
-    navigate({ pathname: location.pathname, search: "" });
-  }
-  const searchTerm =
-    new URLSearchParams(location.search).get("search")?.trim().toLowerCase() ??
-    "";
+  const { searchTerm, clearSearch } = useTitleSearch();
 
   const filteredAuctions = auctions.filter((auction) =>
     auction.title.toLowerCase().includes(searchTerm),
@@ -54,18 +48,15 @@ export default function MyAuctions({ onEdit, onDeleted }) {
       }
     }
 
-    if (user) {
-      refreshAuctions();
-      const intervalId = window.setInterval(refreshAuctions, 5000);
+    if (!user) return () => controller.abort();
 
-      return () => {
-        window.clearInterval(intervalId);
-        controller.abort();
-      };
-    }
+    refreshAuctions();
+    const intervalId = window.setInterval(refreshAuctions, 5000);
 
-    setLoading(false);
-    return () => controller.abort();
+    return () => {
+      window.clearInterval(intervalId);
+      controller.abort();
+    };
   }, [user]);
 
   if (!user)
@@ -84,16 +75,13 @@ export default function MyAuctions({ onEdit, onDeleted }) {
   return (
     <main className="my-auctions">
       <h3 className="my-auctions__title">My Auctions</h3>
-      {searchTerm && (
-        <section className="search-results">
-          <p>Search results for “{searchTerm}”</p>
-          <button type="button" onClick={clearSearch}>
-            Back to all results
-          </button>
-        </section>
-      )}
+      <SearchResults searchTerm={searchTerm} onClear={clearSearch} />
 
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <p className="my-auctions__error" role="alert">
+          {error}
+        </p>
+      )}
 
       {filteredAuctions.length === 0 ? (
         <p>
@@ -114,12 +102,12 @@ export default function MyAuctions({ onEdit, onDeleted }) {
               )}
 
               <div className="my-auctions__info">
-                <h2>{auction.title}</h2>
-                <p>
+                <h2 className="my-auctions__vehicle-title">{auction.title}</h2>
+                <p className="my-auctions__metadata">
                   {auction.model_year} ·{" "}
                   {Number(auction.mileage).toLocaleString()} miles
                 </p>
-                <p>
+                <p className="my-auctions__price">
                   Starting price:{" "}
                   {new Intl.NumberFormat("en-US", {
                     style: "currency",
@@ -135,14 +123,24 @@ export default function MyAuctions({ onEdit, onDeleted }) {
                     Number(auction.current_bid ?? auction.starting_price),
                   )}
                 </p>
-                <Link to={`/auctions/${auction.id}`}>View auction</Link>
+                <Link
+                  className="my-auctions__view-link"
+                  to={`/auctions/${auction.id}`}
+                >
+                  View auction
+                </Link>
               </div>
 
               <div className="my-auctions__actions">
-                <button type="button" onClick={() => onEdit(auction)}>
+                <button
+                  className="my-auctions__edit-button"
+                  type="button"
+                  onClick={() => onEdit(auction)}
+                >
                   Edit
                 </button>
                 <button
+                  className="my-auctions__delete-button"
                   type="button"
                   onClick={() => {
                     setAuctionToDelete(auction);
