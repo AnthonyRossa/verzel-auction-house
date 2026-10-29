@@ -4,6 +4,8 @@ A vehicle auction app where users can list cars, bid, and track their auctions. 
 
 **Live app:** [verzel-auction-house-nu.vercel.app](https://verzel-auction-house-nu.vercel.app/)
 
+It takes a while to load because it is hosted on a free service so be patient! It might go down after a while as well so keep that in mind.
+
 ## Seeded Users for Testing
 
 All these users have balances, listed auctions, and bids. Feel free to create a new user or use these.
