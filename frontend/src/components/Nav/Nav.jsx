@@ -2,7 +2,7 @@ import "./Nav.css";
 import Search from "../../images/search-icon.svg";
 import { useContext } from "react";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Nav({
   onLoginClick,
@@ -12,11 +12,21 @@ export default function Nav({
 }) {
   const { user } = useContext(CurrentUserContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <>
       <nav className="nav">
         <h1 className="nav__title">Auto Bids</h1>
+        {location.pathname !== "/" && (
+          <button
+            className="nav__home-button"
+            type="button"
+            onClick={() => navigate("/")}
+          >
+            Return to Home Page
+          </button>
+        )}
         <form className="nav__search-form">
           <input
             className="nav__search-input"

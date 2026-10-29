@@ -1,14 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../utils/api";
+import "./MyAuctions.css";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
-import "./MyAuctions.css"
+import DeleteAuction from "../DeleteAuction/DeleteAuction";
 
 export default function MyAuctions({ onEdit, onDeleted }) {
-  const { user, token } = useContext(CurrentUserContext);
+  const { user } = useContext(CurrentUserContext);
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [auctionToDelete, setAuctionToDelete] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -39,21 +41,18 @@ export default function MyAuctions({ onEdit, onDeleted }) {
     return () => controller.abort();
   }, [user]);
 
-  async function handleDelete(auctionId) {
-    if (!window.confirm("Delete this auction?")) return;
-
-    setError("");
-
-    try {
-      await api.deleteAuction(auctionId, token);
-      onDeleted();
-    } catch (err) {
-      setError(err.message || "Could not delete the auction.");
-    }
-  }
-
-  if (!user) return <main><p>Please log in to manage your auctions.</p></main>;
-  if (loading) return <main><p>Loading your auctions...</p></main>;
+  if (!user)
+    return (
+      <main>
+        <p>Please log in to manage your auctions.</p>
+      </main>
+    );
+  if (loading)
+    return (
+      <main>
+        <p>Loading your auctions...</p>
+      </main>
+    );
 
   return (
     <main className="my-auctions">
@@ -97,7 +96,9 @@ export default function MyAuctions({ onEdit, onDeleted }) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleDelete(auction.id)}
+                  onClick={() => {
+                    setAuctionToDelete(auction);
+                  }}
                 >
                   Delete
                 </button>
@@ -105,6 +106,13 @@ export default function MyAuctions({ onEdit, onDeleted }) {
             </li>
           ))}
         </ul>
+      )}
+      {auctionToDelete && (
+        <DeleteAuction
+          auction={auctionToDelete}
+          onClose={() => setAuctionToDelete(null)}
+          onDeleted={onDeleted}
+        />
       )}
     </main>
   );

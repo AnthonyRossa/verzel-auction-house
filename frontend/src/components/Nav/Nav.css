@@ -15,6 +15,20 @@
   white-space: nowrap;
 }
 
+.nav__home-button {
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border: none;
+  border-radius: 4px;
+  color: #1a1a1a;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.nav__home-button:hover {
+  background: #e5e5e5;
+}
+
 .nav__search-form {
   display: flex;
   gap: 0.5rem;

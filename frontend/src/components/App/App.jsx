@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Nav from "../Nav/Nav";
 import Cards from "../Cards/Cards";
@@ -13,11 +13,31 @@ import MyAuctions from "../MyAuctions/MyAuctions";
 import MyBids from "../MyBids/MyBids";
 
 export default function App() {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState(() => {
+    try {
+      const savedSession = localStorage.getItem("auction-session");
+      return savedSession ? JSON.parse(savedSession) : null;
+    } catch (error) {
+      console.error("Could not restore saved session", error);
+      return null;
+    }
+  });
   const [openModal, setOpenModal] = useState(null);
   const [showCreateAuction, setShowCreateAuction] = useState(false);
   const [editingAuction, setEditingAuction] = useState(null);
   const [auctionsVersion, setAuctionsVersion] = useState(0);
+
+  useEffect(() => {
+  try {
+    if (session) {
+      localStorage.setItem("auction-session", JSON.stringify(session));
+    } else {
+      localStorage.removeItem("auction-session");
+    }
+  } catch (error) {
+    console.error("Could not save session", error);
+  }
+}, [session]);
 
   return (
     <>
