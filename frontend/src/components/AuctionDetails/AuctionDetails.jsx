@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import "./AuctionDetails.css"
+import "./AuctionDetails.css";
 import api from "../../utils/api";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
 
@@ -52,12 +52,13 @@ export default function AuctionDetails({ onLoginClick }) {
     setBidError("");
     setPlacingBid(true);
 
-    const amount = new FormData(event.currentTarget).get("amount");
+    const form = event.currentTarget;
+    const amount = new FormData(form).get("amount");
 
     try {
       await api.placeBid(id, amount, token);
       setBids(await api.getBids(id));
-      event.currentTarget.reset();
+      form.reset();
     } catch (err) {
       setBidError(err.message);
     } finally {
@@ -133,6 +134,25 @@ export default function AuctionDetails({ onLoginClick }) {
           Log in to place a bid
         </button>
       )}
+      <section className="auction-details__history">
+        <h2>Bid history</h2>
+
+        {bids.length === 0 ? (
+          <p className="auction-details__text">No bids yet.</p>
+        ) : (
+          <ol className="auction-details__bid-list">
+            {bids.map((bid) => (
+              <li className="auction-details__bid" key={bid.id}>
+                <span>{bid.bidder_name}</span>
+                <strong>{formatPrice(bid.amount)}</strong>
+                <time dateTime={bid.created_at}>
+                  {new Date(bid.created_at).toLocaleString()}
+                </time>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
     </main>
   );
 }

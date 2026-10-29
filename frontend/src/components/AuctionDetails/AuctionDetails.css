@@ -83,3 +83,32 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.auction-details__history {
+  margin-top: 2rem;
+}
+
+.auction-details__history h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.auction-details__bid-list {
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid #e5e5e5;
+}
+
+.auction-details__bid {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.auction-details__bid time {
+  color: #666;
+  font-size: 0.85rem;
+}
