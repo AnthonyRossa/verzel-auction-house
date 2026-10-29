@@ -88,6 +88,10 @@ class Api {
       token,
     });
   }
+
+  getMyBids(token, { signal } = {}) {
+    return this._makeRequest("/bids/mine", { token, signal });
+  }
 }
 
 const api = new Api(BASE_URL);

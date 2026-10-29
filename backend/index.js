@@ -24,6 +24,7 @@ app.get("/api/health", async (_req, res) => {
 app.use("/api/auctions", auctionsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/auctions/:id/bids", bidsRouter);
+app.use("/api/bids", bidsRouter);
 
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}`);

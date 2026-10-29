@@ -10,6 +10,7 @@ import CurrentUserContext from "../../contexts/CurrentUserContext";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AuctionDetails from "../AuctionDetails/AuctionDetails";
 import MyAuctions from "../MyAuctions/MyAuctions";
+import MyBids from "../MyBids/MyBids";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -83,6 +84,7 @@ export default function App() {
               />
             }
           />
+          <Route path="/my-bids" element={<MyBids />} />
         </Routes>
         <Footer />
       </CurrentUserContext.Provider>

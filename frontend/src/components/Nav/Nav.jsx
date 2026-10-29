@@ -9,8 +9,6 @@ export default function Nav({
   onRegisterClick,
   onLogoutClick,
   onCreateAuctionClick,
-  onMyAuctionsClick,
-  onMyBidsClick,
 }) {
   const { user } = useContext(CurrentUserContext);
   const navigate = useNavigate();
@@ -42,7 +40,7 @@ export default function Nav({
             <button
               className="nav_act-button"
               type="button"
-              onClick={onMyBidsClick}
+              onClick={() => navigate("/my-bids")}
             >
               My Bids
             </button>
