@@ -84,4 +84,4 @@ available at `http://localhost:3000/api/health`.
 
 ## Next steps
 
-Improve a few design inconsistencies, dark mode, mobile version, integrate with public API, security improvements, fix router inconsistencies.
+Improve a few design inconsistencies, add spinners for loading, dark mode, mobile version, integrate with public API, security improvements, fix router inconsistencies.
